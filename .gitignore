@@ -1,0 +1,13 @@
+.cache/
+__pycache__/
+*.pyc
+evaluation/ledger.jsonl
+.env
+dataset/
+
+# private session logs / local artifacts (contain local paths and account details)
+agent-trace/
+agent-trace.zip
+chat-transcript.txt
+log.txt
+code.zip

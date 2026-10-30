@@ -1,0 +1,14 @@
+# No secrets here. The API key (only needed for the optional vision extractor in
+# deletion_audit/visual.py) is read from the ANTHROPIC_API_KEY environment variable.
+provider = "Anthropic"
+
+[models]
+# Optional: regenerate code/data/visual_facts.json from the screenshots / PDFs.
+visual_extraction = "claude-sonnet-5-5"
+
+# USD per million tokens, from the provider's price list. Only needed if the optional LLM stage is run
+# (the shipped final run makes zero model calls). Example:
+#
+# [pricing."claude-sonnet-5-5"]
+# input_per_mtok = 0.0
+# output_per_mtok = 0.0

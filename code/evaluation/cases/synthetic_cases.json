@@ -1,0 +1,86 @@
+[
+  {
+    "name": "syn_not_applicable_keep_account",
+    "why": "Customer asked to KEEP the account (no deletion request). Authorises no steps at all.",
+    "assessment": {"case_id": "syn_001", "deletion_requested": false, "resources": [], "flows": [], "restores": []},
+    "expected_status": "NOT_APPLICABLE",
+    "expected_steps": []
+  },
+  {
+    "name": "syn_complete_with_tombstone_and_retention",
+    "why": "Everything compliant: tombstone redacted, invoice retained, index copy gone, flow off, backup blocked. Only cited VERIFICATION steps.",
+    "assessment": {
+      "case_id": "syn_002", "deletion_requested": true,
+      "resources": [
+        {"system_id": "account_service", "resource_id": "account_001", "treatment": "REDACT", "state": "REDACTED", "evidence_id": "audit_3"},
+        {"system_id": "billing", "resource_id": "invoice_9", "treatment": "RETAIN", "state": "INTACT", "evidence_id": "evidence_02"},
+        {"system_id": "search_index", "resource_id": "doc_4", "treatment": "DELETE", "state": "ABSENT", "evidence_id": "act_5"}
+      ],
+      "flows": [{"system_id": "crm_sync", "resource_id": "job_2", "active": false, "evidence_id": "act_6"}],
+      "restores": [{"system_id": "backup_nightly", "resource_id": "bk_1", "blocked": true, "evidence_id": "act_7"}]
+    },
+    "expected_status": "COMPLETE",
+    "expected_steps": [
+      ["VERIFICATION", "VERIFY_RECORD_ABSENT", "search_index", "doc_4", "act_5"],
+      ["VERIFICATION", "VERIFY_RECORD_PRESENT", "billing", "invoice_9", "evidence_02"],
+      ["VERIFICATION", "VERIFY_RECORD_REDACTED", "account_service", "account_001", "audit_3"],
+      ["VERIFICATION", "VERIFY_DATA_FLOW_DISABLED", "crm_sync", "job_2", "act_6"],
+      ["VERIFICATION", "VERIFY_RESTORE_BLOCKED", "backup_nightly", "bk_1", "act_7"]
+    ]
+  },
+  {
+    "name": "syn_incomplete_ghost_user_all_finding_types",
+    "why": "Northstar-style ghost: sync recreates data, attachment left behind, tombstone still has email, analytics keeps a hash, backup can restore. Exercises every finding/remediation/verification op and the full ordering rule.",
+    "assessment": {
+      "case_id": "syn_003", "deletion_requested": true,
+      "resources": [
+        {"system_id": "support_attachments", "resource_id": "file_77", "treatment": "DELETE", "state": "INTACT", "evidence_id": "evidence_03"},
+        {"system_id": "account_service", "resource_id": "account_005", "treatment": "REDACT", "state": "INTACT", "evidence_id": "audit_12"},
+        {"system_id": "analytics_export", "resource_id": "export_9", "treatment": "ANONYMIZE", "state": "INTACT", "evidence_id": "evidence_05"},
+        {"system_id": "billing", "resource_id": "invoice_1", "treatment": "RETAIN", "state": "INTACT", "evidence_id": "evidence_06"}
+      ],
+      "flows": [{"system_id": "crm_sync", "resource_id": "job_2", "active": true, "evidence_id": "act_8"}],
+      "restores": [{"system_id": "backup_nightly", "resource_id": "bk_1", "blocked": false, "evidence_id": "act_9"}]
+    },
+    "expected_status": "INCOMPLETE",
+    "expected_steps": [
+      ["FINDING", "REPORT_REMAINING_RECORD", "support_attachments", "file_77", "evidence_03"],
+      ["FINDING", "REPORT_EXPOSED_PII", "account_service", "account_005", "audit_12"],
+      ["FINDING", "REPORT_EXPOSED_PII", "analytics_export", "export_9", "evidence_05"],
+      ["FINDING", "REPORT_ACTIVE_DATA_FLOW", "crm_sync", "job_2", "act_8"],
+      ["FINDING", "REPORT_RESTORE_RISK", "backup_nightly", "bk_1", "act_9"],
+      ["REMEDIATION", "DISABLE_DATA_FLOW", "crm_sync", "job_2", ""],
+      ["REMEDIATION", "BLOCK_RESTORE", "backup_nightly", "bk_1", ""],
+      ["REMEDIATION", "DELETE_RECORD", "support_attachments", "file_77", ""],
+      ["REMEDIATION", "REDACT_RECORD", "account_service", "account_005", ""],
+      ["REMEDIATION", "ANONYMIZE_RECORD", "analytics_export", "export_9", ""],
+      ["VERIFICATION", "VERIFY_RECORD_ABSENT", "support_attachments", "file_77", ""],
+      ["VERIFICATION", "VERIFY_RECORD_PRESENT", "billing", "invoice_1", ""],
+      ["VERIFICATION", "VERIFY_RECORD_REDACTED", "account_service", "account_005", ""],
+      ["VERIFICATION", "VERIFY_RECORD_ANONYMIZED", "analytics_export", "export_9", ""],
+      ["VERIFICATION", "VERIFY_DATA_FLOW_DISABLED", "crm_sync", "job_2", ""],
+      ["VERIFICATION", "VERIFY_RESTORE_BLOCKED", "backup_nightly", "bk_1", ""]
+    ]
+  },
+  {
+    "name": "syn_redacted_is_not_anonymized_and_missing_retained",
+    "why": "A merely-redacted record where ANONYMIZE is required still links to user_id -> violation. A policy-retained invoice that is absent cannot be fixed by any allowed operation -> must surface a warning, not silently pass. The already-clean log copy is still verified (labelled-sample convention).",
+    "assessment": {
+      "case_id": "syn_004", "deletion_requested": true,
+      "resources": [
+        {"system_id": "account_service", "resource_id": "account_020", "treatment": "ANONYMIZE", "state": "REDACTED", "evidence_id": "evidence_11"},
+        {"system_id": "app_logs", "resource_id": "log_3", "treatment": "DELETE", "state": "ABSENT", "evidence_id": "act_20"},
+        {"system_id": "billing", "resource_id": "invoice_2", "treatment": "RETAIN", "state": "ABSENT", "evidence_id": "act_21"}
+      ],
+      "flows": [], "restores": []
+    },
+    "expected_status": "INCOMPLETE",
+    "expected_warnings": 1,
+    "expected_steps": [
+      ["FINDING", "REPORT_EXPOSED_PII", "account_service", "account_020", "evidence_11"],
+      ["REMEDIATION", "ANONYMIZE_RECORD", "account_service", "account_020", ""],
+      ["VERIFICATION", "VERIFY_RECORD_ABSENT", "app_logs", "log_3", ""],
+      ["VERIFICATION", "VERIFY_RECORD_ANONYMIZED", "account_service", "account_020", ""]
+    ]
+  }
+]

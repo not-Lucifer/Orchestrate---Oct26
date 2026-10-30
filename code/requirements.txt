@@ -1,0 +1,3 @@
+# Core pipeline: standard library only (Python >= 3.11).
+# Optional (visual extraction / LLM intent second opinion):
+anthropic

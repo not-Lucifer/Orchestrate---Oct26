@@ -1,0 +1,81 @@
+{
+  "_provenance": {
+    "what": "Facts read from the 11 screenshots and 4 PDFs under dataset/evidence (participant-visible evidence only).",
+    "how": "Transcribed by Claude Code (model claude-sonnet-5-5) during development by viewing each file, using the schema in prompts/02_evidence_extractor.md. `python code/deletion_audit/visual.py` regenerates the same structure with the Anthropic API (cached, metered in the usage ledger); this file is the cache so the pipeline runs offline and deterministically.",
+    "schema": "files.<file_id>.facts[] = {t (capture time from evidence_files.csv), resource_id, category, state, keys[] (identifiers printed in the file)}",
+    "state_vocabulary": "FOUND | NOT_FOUND | IDENTIFIABLE | REDACTED | ANONYMIZED | ACTIVE | BLOCKED | DISABLED",
+    "not_used": {
+      "evidence_27": "legal retention register lists order references per user_id but no legal_hold resource ids, so it cannot be turned into resource-level facts."
+    }
+  },
+  "files": {
+    "evidence_04": {
+      "describes": "Customer Operations console: Haruka Sato, user_11, account_5762, email and phone shown, account active",
+      "facts": [{"t": "2026-09-26T11:00:00Z", "resource_id": "account_5762", "category": "USER_PROFILE", "state": "FOUND",
+                 "keys": ["haruka.s1838@zoho.com", "+81 90 7610 2507", "user_11"]}]
+    },
+    "evidence_09": {
+      "describes": "Search console query email:g.silva76@gmail.com: search_428 (Gabriel Silva, user_13) and search_1874 (g.silva76.jr@gmail.com, a different person)",
+      "facts": [{"t": "2026-09-01T06:00:00Z", "resource_id": "search_428", "category": "SEARCH_INDEX_ENTRY", "state": "FOUND",
+                 "keys": ["g.silva76@gmail.com", "user_13"]}]
+    },
+    "evidence_14": {
+      "describes": "Connections console: data_flow_1121 healthy, continuous sync, selector jain.aditi@gmail.com (data_flow_9846 selector lucia-torres@gmail.com is another person)",
+      "facts": [{"t": "2026-08-07T08:00:00Z", "resource_id": "data_flow_1121", "category": "DATA_FLOW", "state": "ACTIVE",
+                 "keys": ["jain.aditi@gmail.com"]}]
+    },
+    "evidence_18": {
+      "describes": "Customer statement NST-2026-0718-1842 for Ingrid Dahl, user_18, ingrid.dahl@outlook.com, order ORD-20261260 (catalog resource export_1842)",
+      "facts": [{"t": "2026-07-18T11:00:00Z", "resource_id": "export_1842", "category": "USER_EXPORT", "state": "FOUND",
+                 "keys": ["ingrid.dahl@outlook.com", "user_18"]}]
+    },
+    "evidence_19": {
+      "describes": "Pulse Analytics user view: Omar Darwish, user_20, analytics_7438, darwish.omar@icloud.com",
+      "facts": [{"t": "2026-07-13T10:00:00Z", "resource_id": "analytics_7438", "category": "ANALYTICS_PROFILE", "state": "IDENTIFIABLE",
+                 "keys": ["darwish.omar@icloud.com", "user_20"]}]
+    },
+    "evidence_23": {
+      "describes": "Customer Download Center: export_1260 owner ingrid.dahl@outlook.com status Ready (other rows belong to staff accounts)",
+      "facts": [{"t": "2026-06-18T12:00:00Z", "resource_id": "export_1260", "category": "USER_EXPORT", "state": "FOUND",
+                 "keys": ["ingrid.dahl@outlook.com"]}]
+    },
+    "evidence_28": {
+      "describes": "Helpline console: ticket CS-5034, support_1034, customer Kofi Agyeman, email kagyeman8947@fastmail.com shown",
+      "facts": [{"t": "2026-05-24T07:00:00Z", "resource_id": "support_1034", "category": "SUPPORT_MESSAGE", "state": "IDENTIFIABLE",
+                 "keys": ["kagyeman8947@fastmail.com"]}]
+    },
+    "evidence_32": {
+      "describes": "Vault Recovery Manager: archive backup_9287 account areed1433@gmail.com, listed as restorable archive (restores of sibling archives completed)",
+      "facts": [{"t": "2026-04-29T09:00:00Z", "resource_id": "backup_9287", "category": "BACKUP_ARCHIVE", "state": "ACTIVE",
+                 "keys": ["areed1433@gmail.com"]}]
+    },
+    "evidence_37": {
+      "describes": "Sentinel account events for subject user_03: audit_record_003 account closure recorded, signature valid",
+      "facts": [{"t": "2026-09-05T07:00:00Z", "resource_id": "audit_record_003", "category": "SECURITY_AUDIT_LOG", "state": "FOUND",
+                 "keys": ["user_03"]}]
+    },
+    "evidence_42": {
+      "describes": "Customer Reference Registry: user_17 retained reference, no name/email/phone, linked records only",
+      "facts": [{"t": "2026-03-10T06:00:00Z", "resource_id": "tombstone_17", "category": "ACCOUNT_TOMBSTONE", "state": "REDACTED",
+                 "keys": ["user_17"]}]
+    },
+    "evidence_46": {
+      "describes": "Object storage browser, support-attachments/2026/02: delivery_confirmation_19.pdf present (catalog resource object_19)",
+      "facts": [{"t": "2026-02-13T08:00:00Z", "resource_id": "object_19", "category": "SUPPORT_ATTACHMENT", "state": "FOUND", "keys": []}]
+    },
+    "evidence_55": {
+      "describes": "Compliance journal extract CJX-20260905-0630: audit_record_003, subject user_03, account closure recorded, retain until 25 Aug 2027",
+      "facts": [{"t": "2026-09-05T06:30:00Z", "resource_id": "audit_record_003", "category": "SECURITY_AUDIT_LOG", "state": "FOUND",
+                 "keys": ["user_03"]}]
+    },
+    "evidence_58": {
+      "describes": "Delivery address correction request CS-4827 / support_001 with Priya Raman, priya.raman@gmail.com, +91 98765 73142; attachment delivery_address_correction.pdf",
+      "facts": [{"t": "2026-09-12T07:30:00Z", "resource_id": "support_001", "category": "SUPPORT_ATTACHMENT", "state": "FOUND",
+                 "keys": ["priya.raman@gmail.com", "+91 98765 73142"]}]
+    },
+    "evidence_60": {
+      "describes": "Audience Operations: marketing_001 live profile (displayed identity differs from the catalog link; the catalog link is authoritative)",
+      "facts": [{"t": "2026-09-16T07:20:00Z", "resource_id": "marketing_001", "category": "MARKETING_PROFILE", "state": "FOUND", "keys": []}]
+    }
+  }
+}
